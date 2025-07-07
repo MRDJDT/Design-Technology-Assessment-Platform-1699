@@ -1,26 +1,41 @@
 import React from 'react';
-import {Link, useLocation} from 'react-router-dom';
-import {motion} from 'framer-motion';
+import { Link, useLocation } from 'react-router-dom';
+import { motion } from 'framer-motion';
 import SafeIcon from '../../common/SafeIcon';
 import * as FiIcons from 'react-icons/fi';
-import {useAuth} from '../../contexts/AuthContext';
+import { useAuth } from '../../contexts/AuthContext';
 
-const {FiHome, FiUsers, FiSettings, FiDatabase, FiBarChart3, FiShield, FiLogOut, FiBookOpen, FiBrain, FiCalendar, FiClock, FiBook} = FiIcons;
+const {
+  FiHome,
+  FiUsers,
+  FiSettings,
+  FiDatabase,
+  FiBarChart3,
+  FiShield,
+  FiLogOut,
+  FiBookOpen,
+  FiBrain,
+  FiCalendar,
+  FiClock,
+  FiBook,
+  FiUserPlus
+} = FiIcons;
 
 export default function AdminNavbar() {
-  const {user, logout} = useAuth();
+  const { user, logout } = useAuth();
   const location = useLocation();
 
   const navItems = [
-    {path: '/admin', icon: FiHome, label: 'Dashboard'},
-    {path: '/admin/users', icon: FiUsers, label: 'Users'},
-    {path: '/admin/classes', icon: FiCalendar, label: 'Classes'},
-    {path: '/admin/timetable', icon: FiClock, label: 'Timetable'},
-    {path: '/admin/timetable-settings', icon: FiSettings, label: 'Timetable Settings'},
-    {path: '/admin/journal-review', icon: FiBook, label: 'Journal Review'}, // Added journal review
-    {path: '/admin/ai-settings', icon: FiBrain, label: 'AI Settings'},
-    {path: '/admin/analytics', icon: FiBarChart3, label: 'Analytics'},
-    {path: '/admin/system', icon: FiDatabase, label: 'System'}
+    { path: '/admin', icon: FiHome, label: 'Dashboard' },
+    { path: '/admin/users', icon: FiUsers, label: 'Users' },
+    { path: '/admin/pupils', icon: FiUserPlus, label: 'Pupils' },
+    { path: '/admin/classes', icon: FiCalendar, label: 'Classes' },
+    { path: '/admin/timetable', icon: FiClock, label: 'Timetable' },
+    { path: '/admin/timetable-settings', icon: FiSettings, label: 'Timetable Settings' },
+    { path: '/admin/journal-review', icon: FiBook, label: 'Journal Review' },
+    { path: '/admin/ai-settings', icon: FiBrain, label: 'AI Settings' },
+    { path: '/admin/analytics', icon: FiBarChart3, label: 'Analytics' },
+    { path: '/admin/system', icon: FiDatabase, label: 'System' }
   ];
 
   const handleSignOut = async () => {
@@ -49,8 +64,8 @@ export default function AdminNavbar() {
                       ? 'text-purple-600 bg-purple-50'
                       : 'text-gray-600 hover:text-gray-900 hover:bg-gray-50'
                   }`}
-                  whileHover={{scale: 1.05}}
-                  whileTap={{scale: 0.95}}
+                  whileHover={{ scale: 1.05 }}
+                  whileTap={{ scale: 0.95 }}
                 >
                   <div className="flex items-center space-x-2">
                     <SafeIcon icon={item.icon} className="text-lg" />
@@ -77,11 +92,12 @@ export default function AdminNavbar() {
                 <div className="text-gray-500">Administrator</div>
               </div>
             </div>
+
             <motion.button
               onClick={handleSignOut}
               className="flex items-center space-x-2 px-3 py-2 text-gray-600 hover:text-red-600 transition-colors"
-              whileHover={{scale: 1.05}}
-              whileTap={{scale: 0.95}}
+              whileHover={{ scale: 1.05 }}
+              whileTap={{ scale: 0.95 }}
             >
               <SafeIcon icon={FiLogOut} className="text-lg" />
               <span>Sign Out</span>

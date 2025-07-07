@@ -1,13 +1,32 @@
-import React, {useState, useEffect} from 'react'
-import {motion, AnimatePresence} from 'framer-motion'
-import SafeIcon from '../../common/SafeIcon'
-import * as FiIcons from 'react-icons/fi'
-import {useAuth} from '../../contexts/AuthContext'
+import React, { useState, useEffect } from 'react';
+import { motion, AnimatePresence } from 'framer-motion';
+import SafeIcon from '../../common/SafeIcon';
+import * as FiIcons from 'react-icons/fi';
+import { useAuth } from '../../contexts/AuthContext';
 
-const {FiBook, FiMessageCircle, FiSend, FiUser, FiBot, FiCalendar, FiFilter, FiSearch, FiEye, FiHeart, FiStar, FiClock, FiTag, FiImage, FiUsers, FiDownload, FiRefreshCw} = FiIcons
+const {
+  FiBook,
+  FiMessageCircle,
+  FiSend,
+  FiUser,
+  FiBot,
+  FiCalendar,
+  FiFilter,
+  FiSearch,
+  FiEye,
+  FiHeart,
+  FiStar,
+  FiClock,
+  FiTag,
+  FiImage,
+  FiUsers,
+  FiDownload,
+  FiRefreshCw,
+  FiX
+} = FiIcons;
 
-export default function JournalReview() {
-  const {user} = useAuth()
+export default function AdminJournalReview() {
+  const { user } = useAuth();
   const [journalEntries, setJournalEntries] = useState([
     {
       id: 1,
@@ -104,55 +123,28 @@ export default function JournalReview() {
         encouragement: 'Every expert was once a beginner - your willingness to keep trying shows real character!'
       },
       needs_response: true
-    },
-    {
-      id: 4,
-      title: 'Creating My Robot Design',
-      content: 'I spent the whole lesson designing a robot that could help people. I drew lots of sketches and thought about what materials I would need. It was really fun to imagine all the things my robot could do!',
-      subject: 'Design & Technology',
-      mood: 'excited',
-      tags: ['robot', 'design', 'sketching', 'imagination'],
-      images: [
-        {
-          id: 4,
-          name: 'robot_sketches.jpg',
-          url: 'https://images.unsplash.com/photo-1485827404703-89b55fcc595e?w=400',
-          size: 280000
-        }
-      ],
-      created_at: '2024-01-16T09:45:00Z',
-      pupil: {
-        id: 3,
-        name: 'Emma Wilson',
-        class: 'Year 3C',
-        avatar: 'EW'
-      },
-      teacher_responses: [],
-      ai_feedback: null,
-      needs_response: true
     }
-  ])
+  ]);
 
-  const [selectedEntry, setSelectedEntry] = useState(null)
-  const [responseText, setResponseText] = useState('')
+  const [selectedEntry, setSelectedEntry] = useState(null);
+  const [responseText, setResponseText] = useState('');
   const [filter, setFilter] = useState({
     needsResponse: false,
     subject: 'all',
     mood: 'all',
     pupil: 'all',
     hasImages: false
-  })
-  const [searchTerm, setSearchTerm] = useState('')
-  const [viewMode, setViewMode] = useState('grid') // 'grid' or 'list'
+  });
+  const [searchTerm, setSearchTerm] = useState('');
 
   const moods = [
-    {value: 'excited', emoji: '😊', label: 'Excited', color: 'yellow'},
-    {value: 'proud', emoji: '😄', label: 'Proud', color: 'green'},
-    {value: 'confused', emoji: '😕', label: 'Confused', color: 'orange'},
-    {value: 'frustrated', emoji: '😤', label: 'Frustrated', color: 'red'},
-    {value: 'curious', emoji: '🤔', label: 'Curious', color: 'purple'},
-    {value: 'neutral', emoji: '😐', label: 'Neutral', color: 'gray'}
-  ]
+    { value: 'excited', emoji: '😊', label: 'Excited', color: 'yellow' },
+    { value: 'proud', emoji: '😄', label: 'Proud', color: 'green' },
+    { value: 'confused', emoji: '😕', label: 'Confused', color: 'orange' },
+    { value: 'frustrated', emoji: '😤', label: 'Frustrated', color: 'red' },
+    { value: 'curious', emoji: '🤔', label: 'Curious', color: 'purple' },
+    { value: 'neutral', emoji: '😐', label: 'Neutral', color: 'gray' }
+  ];
 
   const subjects = [
     'Design & Technology',
@@ -161,70 +153,72 @@ export default function JournalReview() {
     'Computing',
     'Mathematics',
     'English'
-  ]
+  ];
 
   const handleSendResponse = () => {
-    if (!responseText.trim() || !selectedEntry) return
+    if (!responseText.trim() || !selectedEntry) return;
 
     const newResponse = {
       id: Date.now(),
-      teacher_name: user?.user_metadata?.name || 'Teacher',
+      teacher_name: user?.user_metadata?.name || 'Admin',
       content: responseText,
       created_at: new Date().toISOString()
-    }
+    };
 
-    setJournalEntries(prev => prev.map(entry => 
-      entry.id === selectedEntry.id 
-        ? {
-            ...entry, 
-            teacher_responses: [...entry.teacher_responses, newResponse],
-            needs_response: false
-          }
-        : entry
-    ))
+    setJournalEntries(prev =>
+      prev.map(entry =>
+        entry.id === selectedEntry.id
+          ? {
+              ...entry,
+              teacher_responses: [...entry.teacher_responses, newResponse],
+              needs_response: false
+            }
+          : entry
+      )
+    );
 
-    setResponseText('')
+    setResponseText('');
     setSelectedEntry({
       ...selectedEntry,
       teacher_responses: [...selectedEntry.teacher_responses, newResponse],
       needs_response: false
-    })
-  }
+    });
+  };
 
   const getMoodConfig = (mood) => {
-    return moods.find(m => m.value === mood) || moods.find(m => m.value === 'neutral')
-  }
+    return moods.find(m => m.value === mood) || moods.find(m => m.value === 'neutral');
+  };
 
   const filteredEntries = journalEntries.filter(entry => {
     const matchesSearch = entry.title.toLowerCase().includes(searchTerm.toLowerCase()) ||
                          entry.content.toLowerCase().includes(searchTerm.toLowerCase()) ||
-                         entry.pupil.name.toLowerCase().includes(searchTerm.toLowerCase())
+                         entry.pupil.name.toLowerCase().includes(searchTerm.toLowerCase());
     
-    const matchesNeedsResponse = !filter.needsResponse || entry.needs_response
-    const matchesSubject = filter.subject === 'all' || entry.subject === filter.subject
-    const matchesMood = filter.mood === 'all' || entry.mood === filter.mood
-    const matchesPupil = filter.pupil === 'all' || entry.pupil.name === filter.pupil
-    const matchesHasImages = !filter.hasImages || (entry.images && entry.images.length > 0)
+    const matchesNeedsResponse = !filter.needsResponse || entry.needs_response;
+    const matchesSubject = filter.subject === 'all' || entry.subject === filter.subject;
+    const matchesMood = filter.mood === 'all' || entry.mood === filter.mood;
+    const matchesPupil = filter.pupil === 'all' || entry.pupil.name === filter.pupil;
+    const matchesHasImages = !filter.hasImages || (entry.images && entry.images.length > 0);
 
-    return matchesSearch && matchesNeedsResponse && matchesSubject && matchesMood && matchesPupil && matchesHasImages
-  })
+    return matchesSearch && matchesNeedsResponse && matchesSubject && matchesMood && matchesPupil && matchesHasImages;
+  });
 
   const getStats = () => {
     return {
       total: journalEntries.length,
       needsResponse: journalEntries.filter(e => e.needs_response).length,
       thisWeek: journalEntries.filter(e => {
-        const entryDate = new Date(e.created_at)
-        const weekAgo = new Date(Date.now() - 7 * 24 * 60 * 60 * 1000)
-        return entryDate > weekAgo
+        const entryDate = new Date(e.created_at);
+        const weekAgo = new Date(Date.now() - 7 * 24 * 60 * 60 * 1000);
+        return entryDate > weekAgo;
       }).length,
       withImages: journalEntries.filter(e => e.images && e.images.length > 0).length,
       totalPupils: new Set(journalEntries.map(e => e.pupil.id)).size
-    }
-  }
+    };
+  };
 
-  const stats = getStats()
-  const uniquePupils = [...new Set(journalEntries.map(e => e.pupil.name))]
+  const stats = getStats();
+  const uniquePupils = [...new Set(journalEntries.map(e => e.pupil.name))];
 
   const exportData = () => {
     const data = {
@@ -243,16 +237,16 @@ export default function JournalReview() {
         hasAIFeedback: !!entry.ai_feedback,
         createdAt: entry.created_at
       }))
-    }
+    };
 
-    const blob = new Blob([JSON.stringify(data, null, 2)], { type: 'application/json' })
-    const url = URL.createObjectURL(blob)
-    const a = document.createElement('a')
-    a.href = url
-    a.download = `journal_entries_${new Date().toISOString().split('T')[0]}.json`
-    a.click()
-    URL.revokeObjectURL(url)
-  }
+    const blob = new Blob([JSON.stringify(data, null, 2)], { type: 'application/json' });
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement('a');
+    a.href = url;
+    a.download = `journal_entries_${new Date().toISOString().split('T')[0]}.json`;
+    a.click();
+    URL.revokeObjectURL(url);
+  };
 
   return (
     <div className="space-y-6">
@@ -265,8 +259,8 @@ export default function JournalReview() {
           <motion.button
             onClick={exportData}
             className="bg-green-600 text-white px-4 py-2 rounded-lg hover:bg-green-700 flex items-center space-x-2"
-            whileHover={{scale: 1.02}}
-            whileTap={{scale: 0.98}}
+            whileHover={{ scale: 1.02 }}
+            whileTap={{ scale: 0.98 }}
           >
             <SafeIcon icon={FiDownload} />
             <span>Export</span>
@@ -274,8 +268,8 @@ export default function JournalReview() {
           <motion.button
             onClick={() => window.location.reload()}
             className="bg-gray-600 text-white px-4 py-2 rounded-lg hover:bg-gray-700 flex items-center space-x-2"
-            whileHover={{scale: 1.02}}
-            whileTap={{scale: 0.98}}
+            whileHover={{ scale: 1.02 }}
+            whileTap={{ scale: 0.98 }}
           >
             <SafeIcon icon={FiRefreshCw} />
             <span>Refresh</span>
@@ -286,8 +280,8 @@ export default function JournalReview() {
       {/* Stats Cards */}
       <div className="grid grid-cols-1 md:grid-cols-5 gap-6">
         <motion.div
-          initial={{opacity: 0, y: 20}}
-          animate={{opacity: 1, y: 0}}
+          initial={{ opacity: 0, y: 20 }}
+          animate={{ opacity: 1, y: 0 }}
           className="bg-white rounded-xl shadow-lg p-6"
         >
           <div className="flex items-center justify-between">
@@ -302,9 +296,9 @@ export default function JournalReview() {
         </motion.div>
 
         <motion.div
-          initial={{opacity: 0, y: 20}}
-          animate={{opacity: 1, y: 0}}
-          transition={{delay: 0.1}}
+          initial={{ opacity: 0, y: 20 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ delay: 0.1 }}
           className="bg-white rounded-xl shadow-lg p-6"
         >
           <div className="flex items-center justify-between">
@@ -319,9 +313,9 @@ export default function JournalReview() {
         </motion.div>
 
         <motion.div
-          initial={{opacity: 0, y: 20}}
-          animate={{opacity: 1, y: 0}}
-          transition={{delay: 0.2}}
+          initial={{ opacity: 0, y: 20 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ delay: 0.2 }}
           className="bg-white rounded-xl shadow-lg p-6"
         >
           <div className="flex items-center justify-between">
@@ -336,9 +330,9 @@ export default function JournalReview() {
         </motion.div>
 
         <motion.div
-          initial={{opacity: 0, y: 20}}
-          animate={{opacity: 1, y: 0}}
-          transition={{delay: 0.3}}
+          initial={{ opacity: 0, y: 20 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ delay: 0.3 }}
           className="bg-white rounded-xl shadow-lg p-6"
         >
           <div className="flex items-center justify-between">
@@ -353,9 +347,9 @@ export default function JournalReview() {
         </motion.div>
 
         <motion.div
-          initial={{opacity: 0, y: 20}}
-          animate={{opacity: 1, y: 0}}
-          transition={{delay: 0.4}}
+          initial={{ opacity: 0, y: 20 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ delay: 0.4 }}
           className="bg-white rounded-xl shadow-lg p-6"
         >
           <div className="flex items-center justify-between">
@@ -372,8 +366,8 @@ export default function JournalReview() {
 
       {/* Filters and Search */}
       <motion.div
-        initial={{opacity: 0, y: 20}}
-        animate={{opacity: 1, y: 0}}
+        initial={{ opacity: 0, y: 20 }}
+        animate={{ opacity: 1, y: 0 }}
         className="bg-white rounded-xl shadow-lg p-6"
       >
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-6 gap-4">
@@ -395,7 +389,7 @@ export default function JournalReview() {
             <label className="block text-sm font-medium text-gray-700 mb-2">Subject</label>
             <select
               value={filter.subject}
-              onChange={(e) => setFilter(prev => ({...prev, subject: e.target.value}))}
+              onChange={(e) => setFilter(prev => ({ ...prev, subject: e.target.value }))}
               className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
             >
               <option value="all">All Subjects</option>
@@ -409,7 +403,7 @@ export default function JournalReview() {
             <label className="block text-sm font-medium text-gray-700 mb-2">Mood</label>
             <select
               value={filter.mood}
-              onChange={(e) => setFilter(prev => ({...prev, mood: e.target.value}))}
+              onChange={(e) => setFilter(prev => ({ ...prev, mood: e.target.value }))}
               className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
             >
               <option value="all">All Moods</option>
@@ -425,7 +419,7 @@ export default function JournalReview() {
             <label className="block text-sm font-medium text-gray-700 mb-2">Pupil</label>
             <select
               value={filter.pupil}
-              onChange={(e) => setFilter(prev => ({...prev, pupil: e.target.value}))}
+              onChange={(e) => setFilter(prev => ({ ...prev, pupil: e.target.value }))}
               className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
             >
               <option value="all">All Pupils</option>
@@ -441,7 +435,7 @@ export default function JournalReview() {
               <input
                 type="checkbox"
                 checked={filter.needsResponse}
-                onChange={(e) => setFilter(prev => ({...prev, needsResponse: e.target.checked}))}
+                onChange={(e) => setFilter(prev => ({ ...prev, needsResponse: e.target.checked }))}
                 className="rounded border-gray-300 text-blue-600 focus:ring-blue-500"
               />
               <span className="text-sm font-medium text-gray-700">Needs Response</span>
@@ -450,7 +444,7 @@ export default function JournalReview() {
               <input
                 type="checkbox"
                 checked={filter.hasImages}
-                onChange={(e) => setFilter(prev => ({...prev, hasImages: e.target.checked}))}
+                onChange={(e) => setFilter(prev => ({ ...prev, hasImages: e.target.checked }))}
                 className="rounded border-gray-300 text-blue-600 focus:ring-blue-500"
               />
               <span className="text-sm font-medium text-gray-700">Has Images</span>
@@ -468,14 +462,13 @@ export default function JournalReview() {
       {/* Journal Entries Grid */}
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
         {filteredEntries.map((entry, index) => {
-          const moodConfig = getMoodConfig(entry.mood)
-          
+          const moodConfig = getMoodConfig(entry.mood);
           return (
             <motion.div
               key={entry.id}
-              initial={{opacity: 0, y: 20}}
-              animate={{opacity: 1, y: 0}}
-              transition={{delay: index * 0.1}}
+              initial={{ opacity: 0, y: 20 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ delay: index * 0.1 }}
               className={`bg-white rounded-xl shadow-lg p-6 hover:shadow-xl transition-shadow cursor-pointer ${
                 entry.needs_response ? 'border-l-4 border-red-500' : ''
               }`}
@@ -555,7 +548,7 @@ export default function JournalReview() {
                 </div>
               </div>
             </motion.div>
-          )
+          );
         })}
       </div>
 
@@ -571,16 +564,16 @@ export default function JournalReview() {
       <AnimatePresence>
         {selectedEntry && (
           <motion.div
-            initial={{opacity: 0}}
-            animate={{opacity: 1}}
-            exit={{opacity: 0}}
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            exit={{ opacity: 0 }}
             className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center p-4 z-50"
             onClick={() => setSelectedEntry(null)}
           >
             <motion.div
-              initial={{scale: 0.9, opacity: 0}}
-              animate={{scale: 1, opacity: 1}}
-              exit={{scale: 0.9, opacity: 0}}
+              initial={{ scale: 0.9, opacity: 0 }}
+              animate={{ scale: 1, opacity: 1 }}
+              exit={{ scale: 0.9, opacity: 0 }}
               className="bg-white rounded-xl p-6 w-full max-w-4xl max-h-[90vh] overflow-y-auto"
               onClick={e => e.stopPropagation()}
             >
@@ -650,7 +643,7 @@ export default function JournalReview() {
                 </div>
               )}
 
-              {selectedEntry.tags.length > 0 && (
+              {selectedEntry.tags && selectedEntry.tags.length > 0 && (
                 <div className="mb-6">
                   <h4 className="font-medium text-gray-900 mb-2">Tags</h4>
                   <div className="flex flex-wrap gap-2">
@@ -671,8 +664,7 @@ export default function JournalReview() {
                     <h4 className="font-medium text-purple-900">AI Feedback</h4>
                   </div>
                   <p className="text-purple-800 mb-3">{selectedEntry.ai_feedback.content}</p>
-                  
-                  {selectedEntry.ai_feedback.suggestions.length > 0 && (
+                  {selectedEntry.ai_feedback.suggestions && selectedEntry.ai_feedback.suggestions.length > 0 && (
                     <div className="mb-3">
                       <h5 className="font-medium text-purple-900 mb-2">AI Suggestions:</h5>
                       <ul className="space-y-1">
@@ -685,7 +677,6 @@ export default function JournalReview() {
                       </ul>
                     </div>
                   )}
-                  
                   <div className="p-2 bg-purple-100 rounded text-purple-800 text-sm">
                     <SafeIcon icon={FiHeart} className="inline mr-1" />
                     {selectedEntry.ai_feedback.encouragement}
@@ -694,7 +685,7 @@ export default function JournalReview() {
               )}
 
               {/* Teacher Responses */}
-              {selectedEntry.teacher_responses.length > 0 && (
+              {selectedEntry.teacher_responses && selectedEntry.teacher_responses.length > 0 && (
                 <div className="mb-6">
                   <h4 className="font-medium text-gray-900 mb-4">Teacher Responses</h4>
                   <div className="space-y-4">
@@ -735,8 +726,8 @@ export default function JournalReview() {
                       onClick={handleSendResponse}
                       disabled={!responseText.trim()}
                       className="px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 disabled:opacity-50 disabled:cursor-not-allowed flex items-center space-x-2"
-                      whileHover={{scale: 1.02}}
-                      whileTap={{scale: 0.98}}
+                      whileHover={{ scale: 1.02 }}
+                      whileTap={{ scale: 0.98 }}
                     >
                       <SafeIcon icon={FiSend} />
                       <span>Send Response</span>
@@ -749,5 +740,5 @@ export default function JournalReview() {
         )}
       </AnimatePresence>
     </div>
-  )
+  );
 }

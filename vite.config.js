@@ -9,17 +9,35 @@ export default defineConfig({
     sourcemap: false,
     rollupOptions: {
       output: {
+        // Simpler chunk naming to avoid 404s
+        chunkFileNames: 'assets/[name]-[hash].js',
+        entryFileNames: 'assets/[name]-[hash].js',
+        assetFileNames: 'assets/[name]-[hash].[ext]',
         manualChunks: {
-          vendor: ['react', 'react-dom'],
-          router: ['react-router-dom'],
-          ui: ['framer-motion', 'react-icons'],
-          charts: ['echarts', 'echarts-for-react']
+          // Simplified chunk splitting
+          'react-vendor': ['react', 'react-dom'],
+          'router-vendor': ['react-router-dom'],
+          'animation-vendor': ['framer-motion'],
+          'icons-vendor': ['react-icons'],
+          'charts-vendor': ['echarts', 'echarts-for-react']
         }
       }
-    }
+    },
+    // Ensure assets are properly handled
+    assetsDir: 'assets',
+    // Increase chunk size warning limit
+    chunkSizeWarningLimit: 1000
   },
   optimizeDeps: {
-    include: ['react', 'react-dom', 'react-router-dom', 'framer-motion']
+    include: [
+      'react', 
+      'react-dom', 
+      'react-router-dom', 
+      'framer-motion',
+      'react-icons/fi',
+      'echarts',
+      'echarts-for-react'
+    ]
   },
   server: {
     port: 3000,

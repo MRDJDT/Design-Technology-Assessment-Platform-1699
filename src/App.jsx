@@ -1,8 +1,8 @@
 import React from 'react';
-import {HashRouter as Router, Routes, Route, Navigate} from 'react-router-dom';
-import {QuestProvider} from '@questlabs/react-sdk';
+import { HashRouter as Router, Routes, Route, Navigate } from 'react-router-dom';
+import { QuestProvider } from '@questlabs/react-sdk';
 import '@questlabs/react-sdk/dist/style.css';
-import {AuthProvider, useAuth} from './contexts/AuthContext';
+import { AuthProvider, useAuth } from './contexts/AuthContext';
 import questConfig from './config/questConfig';
 
 // Auth Components
@@ -33,6 +33,7 @@ import AdminDashboard from './components/Admin/AdminDashboard';
 import UserManagement from './components/Admin/UserManagement';
 import AISettings from './components/Admin/AISettings';
 import AdminClassManagement from './components/Admin/ClassManagement';
+import PupilImport from './components/Admin/PupilImport';
 import TimetableManagement from './components/Admin/TimetableManagement';
 import TimetableSettings from './components/Admin/TimetableSettings';
 import SystemHealth from './components/Admin/SystemHealth';
@@ -40,7 +41,7 @@ import Analytics from './components/Admin/Analytics';
 import AdminJournalReview from './components/Admin/JournalReview';
 
 function AppContent() {
-  const {isAuthenticated, user, loading} = useAuth();
+  const { isAuthenticated, user, loading } = useAuth();
 
   if (loading) {
     return (
@@ -78,13 +79,14 @@ function AppContent() {
         <main className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
           <Routes>
             <Route path="/onboarding" element={<OnboardingPage />} />
-            
+
             {/* Admin Routes */}
             {isAdmin && (
               <>
                 <Route path="/" element={<Navigate to="/admin" replace />} />
                 <Route path="/admin" element={<AdminDashboard />} />
                 <Route path="/admin/users" element={<UserManagement />} />
+                <Route path="/admin/pupils" element={<PupilImport />} />
                 <Route path="/admin/ai-settings" element={<AISettings />} />
                 <Route path="/admin/classes" element={<AdminClassManagement />} />
                 <Route path="/admin/timetable" element={<TimetableManagement />} />
@@ -92,14 +94,6 @@ function AppContent() {
                 <Route path="/admin/journal-review" element={<AdminJournalReview />} />
                 <Route path="/admin/analytics" element={<Analytics />} />
                 <Route path="/admin/system" element={<SystemHealth />} />
-                <Route path="/admin/security" element={<div className="text-center py-12">
-                  <h2 className="text-2xl font-bold text-gray-900">Security Settings</h2>
-                  <p className="text-gray-600 mt-2">Security management interface coming soon</p>
-                </div>} />
-                <Route path="/admin/logs" element={<div className="text-center py-12">
-                  <h2 className="text-2xl font-bold text-gray-900">System Logs</h2>
-                  <p className="text-gray-600 mt-2">Detailed log viewer coming soon</p>
-                </div>} />
               </>
             )}
 

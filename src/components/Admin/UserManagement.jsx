@@ -4,7 +4,22 @@ import SafeIcon from '../../common/SafeIcon';
 import * as FiIcons from 'react-icons/fi';
 import { DatabaseService } from '../../services/databaseService';
 
-const { FiUsers, FiSearch, FiFilter, FiPlus, FiEdit3, FiTrash2, FiMail, FiShield, FiUserCheck, FiUserX, FiRefreshCw, FiAlertTriangle, FiCheckCircle } = FiIcons;
+const {
+  FiUsers,
+  FiSearch,
+  FiFilter,
+  FiPlus,
+  FiEdit3,
+  FiTrash2,
+  FiMail,
+  FiShield,
+  FiUserCheck,
+  FiUserX,
+  FiRefreshCw,
+  FiAlertTriangle,
+  FiCheckCircle,
+  FiX
+} = FiIcons;
 
 export default function UserManagement() {
   const [users, setUsers] = useState([]);
@@ -41,7 +56,6 @@ export default function UserManagement() {
       console.log('Loading users with filters:', filters);
       const userData = await DatabaseService.getUsers(filters);
       console.log('Loaded users:', userData);
-      
       setUsers(userData);
     } catch (error) {
       console.error('Error loading users:', error);
@@ -69,12 +83,19 @@ export default function UserManagement() {
       setError(null);
       console.log('Creating user:', newUser);
       
-      const createdUser = await DatabaseService.createUser(newUser);
+      // Create a simple user object that matches our table structure
+      const userToCreate = {
+        name: newUser.name.trim(),
+        email: newUser.email.trim(),
+        role: newUser.role,
+        status: newUser.status
+      };
+      
+      const createdUser = await DatabaseService.createUser(userToCreate);
       console.log('Created user:', createdUser);
       
       // Add the new user to the local state
       setUsers(prev => [createdUser, ...prev]);
-      
       setSuccess('User created successfully!');
       setShowCreateModal(false);
       setNewUser({ name: '', email: '', role: 'pupil', status: 'active' });
@@ -140,7 +161,6 @@ export default function UserManagement() {
       
       // Remove the user from local state
       setUsers(prev => prev.filter(user => user.id !== userId));
-      
       setSuccess('User deleted successfully!');
       
       // Clear success message after 3 seconds
@@ -155,7 +175,6 @@ export default function UserManagement() {
     try {
       setError(null);
       const newStatus = user.status === 'active' ? 'inactive' : 'active';
-      
       console.log('Toggling user status:', user.id, newStatus);
       
       const updatedUser = await DatabaseService.updateUser(user.id, { status: newStatus });
@@ -247,7 +266,10 @@ export default function UserManagement() {
             <SafeIcon icon={FiAlertTriangle} className="text-red-600" />
             <span className="text-red-700">{error}</span>
           </div>
-          <button onClick={clearMessages} className="text-red-600 hover:text-red-700">
+          <button
+            onClick={clearMessages}
+            className="text-red-600 hover:text-red-700"
+          >
             <SafeIcon icon={FiX} />
           </button>
         </motion.div>
@@ -263,7 +285,10 @@ export default function UserManagement() {
             <SafeIcon icon={FiCheckCircle} className="text-green-600" />
             <span className="text-green-700">{success}</span>
           </div>
-          <button onClick={clearMessages} className="text-green-600 hover:text-green-700">
+          <button
+            onClick={clearMessages}
+            className="text-green-600 hover:text-green-700"
+          >
             <SafeIcon icon={FiX} />
           </button>
         </motion.div>
@@ -379,9 +404,7 @@ export default function UserManagement() {
                         <motion.button
                           onClick={() => toggleUserStatus(user)}
                           className={`p-2 rounded-lg ${
-                            user.status === 'active' 
-                              ? 'text-red-600 hover:bg-red-50' 
-                              : 'text-green-600 hover:bg-green-50'
+                            user.status === 'active' ? 'text-red-600 hover:bg-red-50' : 'text-green-600 hover:bg-green-50'
                           }`}
                           whileHover={{ scale: 1.1 }}
                           whileTap={{ scale: 0.9 }}
@@ -426,12 +449,11 @@ export default function UserManagement() {
               animate={{ scale: 1, opacity: 1 }}
               exit={{ scale: 0.9, opacity: 0 }}
               className="bg-white rounded-xl p-6 w-full max-w-md"
-              onClick={e => e.stopPropagation()}
+              onClick={(e) => e.stopPropagation()}
             >
               <h2 className="text-xl font-bold text-gray-900 mb-6">
                 {editingUser ? 'Edit User' : 'Create New User'}
               </h2>
-
               <div className="space-y-4">
                 <div>
                   <label className="block text-sm font-medium text-gray-700 mb-2">Name</label>
@@ -443,7 +465,6 @@ export default function UserManagement() {
                     placeholder="Enter full name"
                   />
                 </div>
-
                 <div>
                   <label className="block text-sm font-medium text-gray-700 mb-2">Email</label>
                   <input
@@ -454,7 +475,6 @@ export default function UserManagement() {
                     placeholder="Enter email address"
                   />
                 </div>
-
                 <div>
                   <label className="block text-sm font-medium text-gray-700 mb-2">Role</label>
                   <select
@@ -467,7 +487,6 @@ export default function UserManagement() {
                     <option value="admin">Admin</option>
                   </select>
                 </div>
-
                 <div>
                   <label className="block text-sm font-medium text-gray-700 mb-2">Status</label>
                   <select
@@ -480,7 +499,6 @@ export default function UserManagement() {
                   </select>
                 </div>
               </div>
-
               <div className="flex space-x-3 mt-6">
                 <button
                   onClick={() => {
